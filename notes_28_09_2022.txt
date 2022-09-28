@@ -1,0 +1,265 @@
+IOC container
+framework
+Annotation
+dependency injection
+loosely coupled code
+metadatype
+logging
+AOP
+beanFactory
+properties
+features of spring
+auto wiring
+ApplicationContext interface
+DAO
+server web server and applocation server
+DTO
+best practises
+@Configuration
+Java based Configuration
+Class class
+@Component
+AnnotaionConfigApplicationContext
+typecast object
+@Repository
+stereotype annotation
+dependencies
+Non-Invasive
+@ComponentScan
+default names 
+@PropertySouce
+@Service
+@Controller
+getBean()
+Environment
+------------------------------------------------------------------------------------------------------------------------
+
+
+
+public class Address {}
+public class Employee {
+private Address address;
+
+public Employee(Address address){
+  this.address=address;
+ }
+
+public void setAddress(Address address){
+  this.address=address;
+}
+}
+
+public class Tester{
+  public static void main(String args[]){
+     Address address=new Address();
+     address.setHno(1);
+     address.setLocality("Netaji Nagar");
+     Employee employee=new Employee(address);
+     address=employee.getAddress();
+     System.out.println(employee.getId());
+     System.out.println(employee.getName());
+     System.out.println(address.getHno());
+     System.out.println(address.getLocality());
+   }
+}
+// Being a a coder we are wiring(association) the objects.
+---------------------------------------------------------------------------------------------------------------------
+
+To do autowiring, you can use @Autowired annotation. This annotation allows Spring IoC container to resolve and inject dependencies into your bean. It can be applied to attributes, constructors, setter methods of a bean class. 
+
+
+package com.infosys.beans;
+import org.springframework.stereotype.Component;
+@Component
+public class Address {
+	private int hNo;
+	private String locality;
+	private String city;
+	public int gethNo() {
+		return hNo;
+	}
+	public void sethNo(int hNo) {
+		this.hNo = hNo;
+	}
+	public String getLocality() {
+		return locality;
+	}
+	public void setLocality(String locality) {
+		this.locality = locality;
+	}
+	public String getCity() {
+		return city;
+	}
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+}
+
+
+package com.infosys.beans;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component(value="empdetails")
+public class Employee {
+private int empId;
+private String name;
+@Autowired
+private Address address;
+
+
+public int getEmpId() {
+	return empId;
+}
+public void setEmpId(int empId) {
+	this.empId = empId;
+}
+public String getName() {
+	return name;
+}
+public void setName(String name) {
+	this.name = name;
+}
+public Address getAddress() {
+	return address;
+}
+public void setAddress(Address address) {
+	this.address = address;
+}
+
+
+
+
+}
+
+
+public class Tester {
+
+	public static void main(String[] args) {
+	    ApplicationContext context=new AnnotationConfigApplicationContext(SpringConfiguration.class);	
+            //Employee employee=new Employee();
+       	    Employee employee=context.getBean(Employee.class); // Returning an object/bean of Employee class.
+           // Employee employee=(Employee)context.getBean("employee");
+           // Employee employee=(Employee)context.getBean("empdetails");
+	    Address address=employee.getAddress(); // Dont create an object
+	    // during the coding and let IOC container take the responsibility
+	    // of creating the Employee object and the Address object
+	    address.sethNo(111);
+	    address.setLocality("Netaji Nagar");
+	    address.setCity("Delhi");
+	    employee.setEmpId(1);
+	    employee.setName("Juben");
+	    System.out.println(employee.getEmpId());
+	    System.out.println(employee.getName());
+	    System.out.println(address.gethNo());
+	    System.out.println(address.getLocality());
+	    System.out.println(address.getCity());
+	}
+
+}
+
+
+------------------------------------------------------------------------------------------------------------------
+If we dont use the @Autowired to address what will happen
+In the below approach Employee is not having any association with Address
+and they are identified as seperate beans
+public class Tester {
+
+	public static void main(String[] args) {
+		ApplicationContext context=new AnnotationConfigApplicationContext(SpringConfiguration.class);	
+	    Employee employee=context.getBean(Employee.class);
+	    Address address=context.getBean(Address.class);
+	  
+	    //Address address=employee.getAddress(); // Dont create an object
+	    // during the coding and let IOC container take the responsibility
+	    // of creating the Employee object and the Address object
+	   address.sethNo(111);
+	   address.setLocality("Netaji Nagar");
+	   address.setCity("Delhi");
+	    employee.setEmpId(1);
+	    employee.setName("Juben");
+	    System.out.println(employee.getEmpId());
+	    System.out.println(employee.getName());
+	    System.out.println(address.gethNo());
+	    System.out.println(address.getLocality());
+	    System.out.println(address.getCity());
+	}
+
+}
+-----------------------------------------------------------------------------------------
+If we dont use the @Autowired to address what will happen
+we get NullPointerException
+public class Tester {
+
+	public static void main(String[] args) {
+		ApplicationContext context=new AnnotationConfigApplicationContext(SpringConfiguration.class);	
+	    Employee employee=context.getBean(Employee.class);
+	    public class Tester {
+
+	public static void main(String[] args) {
+		ApplicationContext context=new AnnotationConfigApplicationContext(SpringConfiguration.class);	
+	    Employee employee=context.getBean(Employee.class);
+	 
+	    Address address=employee.getAddress(); // Dont create an object
+	    // during the coding and let IOC container take the responsibility
+	    // of creating the Employee object and the Address object
+	   address.sethNo(111);
+	   address.setLocality("Netaji Nagar");
+	   address.setCity("Delhi");
+	    employee.setEmpId(1);
+	    employee.setName("Juben");
+	    System.out.println(employee.getEmpId());
+	    System.out.println(employee.getName());
+	    System.out.println(address.gethNo());
+	    System.out.println(address.getLocality());
+	    System.out.println(address.getCity());
+	}
+
+}
+	  
+	    //Address address=employee.getAddress(); // Dont create an object
+	    // during the coding and let IOC container take the responsibility
+	    // of creating the Employee object and the Address object
+	   address.sethNo(111);
+	   address.setLocality("Netaji Nagar");
+	   address.setCity("Delhi");
+	    employee.setEmpId(1);
+	    employee.setName("Juben");
+	    System.out.println(employee.getEmpId());
+	    System.out.println(employee.getName());
+	    System.out.println(address.gethNo());
+	    System.out.println(address.getLocality());
+	    System.out.println(address.getCity());
+	}
+
+}
+
+In above code, Spring container will perform dependency injection using the Java Reflection API(searching Reflection API in Java).
+
+
+public interface Interface{}
+
+@Component(value="object1")
+public class Class1 implements Interface{}
+
+@Component(value="object2")
+public class Class2 implements Interface{}
+
+@Component
+public class MyClass{
+  @Autowired
+  @Qualifier("object2")
+  private Interface interface;  //Here the container is confused which object to autowire , is it of Class1 or Class2
+
+----------------------------------------------------------------------------------------------------------------------------------
+Autowiring through attribute springdemo6
+Autowiring through setter method springdemo7
+Autowiring throug constructor springdemo8
+---------------------------------
+
+Tester=====>Controller=====>Service====Repository
+
+
+
