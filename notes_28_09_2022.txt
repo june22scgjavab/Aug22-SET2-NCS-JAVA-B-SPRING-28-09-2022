@@ -261,5 +261,312 @@ Autowiring throug constructor springdemo8
 
 Tester=====>Controller=====>Service====Repository
 
+-------------------------------
+
+https://start.spring.io/
+
+After creating the Spring Boot project with Spring Initializer.
+We have to extract project because it is downloaded as zip file. 
+
+
+
+package com.infy;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+@SpringBootApplication
+public class DemoSpringBootApplication  {
+	
+	public static void main(String[] args) {
+		SpringApplication.run(DemoSpringBootApplication.class, args);
+	}
+}
+--------------------------------------------------------------------------------------------------------------------------
+package com.example.demo;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class DemoApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(DemoApplication.class, args);
+		System.out.println("My spring boot application is up");
+	}
+
+}
+
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.7.4</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.example</groupId>
+	<artifactId>demo</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>demo</name>
+	<description>Demo project for Spring Boot</description>
+	<properties>
+		<java.version>11</java.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
+
+------------------------------------------------------------------------------------------------------------------------
+The @SpringBootApplication annotation indicates that it is a configuration class and also triggers auto-configuration and component scanning. It is a combination of the following annotations with their default attributes:
+
+@EnableAutoConfiguration – This annotation enables auto-configuration for Spring Boot application which automatically configures your application based on the dependencies that you have added.
+
+@ComponentScan – This enables Spring bean dependency injection feature by using @Autowired annotation. All application components which are annotated with @Component, @Service, @Repository or @Controller are automatically registered as Spring Beans. These beans can be injected by using @Autowired annotation.
+
+@Configuration – This enables Java based configurations for Spring boot application. 
+
+----------------------------------------------------------------------------------------------------------------------
+Spring Boot Runners
+
+package com.example.demo.component;
+
+import org.springframework.stereotype.Component;
+
+
+@Component
+public class HelloWorld {
+public void display() {
+	System.out.println("Hello World");
+}
+}
+
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import com.example.demo.component.HelloWorld;
+import org.springframework.beans.factory.annotation.Autowired;
+
+@SpringBootApplication
+public class DemoApplication implements CommandLineRunner{
+
+	@Autowired
+	private HelloWorld world;
+
+	public static void main(String[] args) {
+ 
+		SpringApplication.run(DemoApplication.class, args);
+		//System.out.println("My spring boot application is up");
+	}
+
+	@Override
+	public void run(String... args) throws Exception {
+	  greet();
+		
+	}
+
+	private void greet() {
+        world.display();	
+     }
+   
+}
+package com.example.demo;
+
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import com.example.demo.component.HelloWorld;
+import org.springframework.beans.factory.annotation.Autowired;
+
+@SpringBootApplication
+public class DemoApplication implements CommandLineRunner{
+
+	@Autowired
+	private HelloWorld world;
+
+	
+	public static void main(String[] args) {
+ 
+		SpringApplication.run(DemoApplication.class, args);
+		//System.out.println("My spring boot application is up");
+	}
+
+	@Override
+	public void run(String... args) throws Exception {
+	  greet();
+	  hello();
+		
+	}
+
+	private void hello() {
+		System.out.println("I am the hello method");
+		
+	}
+
+	private void greet() {
+    world.display();	
+		
+	}
+
+}
+
+// run is a method of CommandLineRunner interface which we need to override in out Application class if our SpringBootApplication
+is implementing the CommandLineRunner. So the run method is basically to start accessing the beans/objects which are part of
+Spring boot application. So in our above example we created a class HelloWorld and annotated it with @Component. After that
+we autowired that @Component class reference in the Application class so that with that reference we can access the object of the
+HelloWorld created by IOC container so that we can call the display method.
+
+
+As we are implementing CommandLineRunner we have to override the method run of CommandLineRunner.
+
+---------------------------------------------------------------------------------------------------------------------------------
+Do we have any other option to create this Spring Boot project without taking the help of the site for Spring Initializer?
+Yes we can for that we have incorporate spring tool suite (STS) plugin with eclipse.
+
+How to do that?
+Click on Help menu====> Eclipse Marketplace
+------------------------------------------------------------------------------------------------------------------
+Core Java 
+  public class HelloWorld {
+     public void display(){
+      System.out.println("Hello World");
+     }
+   }
+
+  public class Application {
+     public static void main(String[] args){
+       HelloWorld hw=new HelloWorld();
+     }
+  }
+
+--------------------------------------------------------------------------------------------------------------
+Spring Core Java Based
+
+  public class HelloWorld {
+     public void display(){
+       System.out.println("Hello World");
+      }
+    }
+
+   @Configuration
+   public class SpringConfig{
+    @Bean
+     public HelloWorld(){
+      return new HelloWorld();
+     }
+
+   }
+
+  
+   public class Application {
+     public static void main(String args[]) {
+
+      ApplicationContext context=new AnnotationApplicationContext(SpringConfig.class);
+      HelloWorld hw=context.getBean(HelloWorld.class);
+      hw.display();
+     }
+  } 
+
+-----------------------------------------------------------------------
+
+Spring Core Java Annotation based
+
+  package com.infosys.model;
+  @Component
+  public class HelloWorld {
+     public void display(){
+       System.out.println("Hello World");
+      }
+    }
+
+   @Configuration
+   @ComponentScan(basePackages="com.infosys.model")
+   public class SpringConfig{
+
+
+   }
+
+  
+   public class Application {
+     public static void main(String args[]) {
+
+      ApplicationContext context=new AnnotationApplicationContext(SpringConfig.class);
+      HelloWorld hw=context.getBean(HelloWorld.class);
+      hw.display();
+     }
+  } 
+
+------------------------------------------------------------------------------------------------------------------
+ package com.infosys.model;
+  @Component
+  public class HelloWorld {
+     public void display(){
+       System.out.println("Hello World");
+      }
+    }
+
+  
+
+   @SpringBootApplication
+   public class Application implements CommandLineRunner {
+     @Autowired
+     private HelloWorld hw;
+     public static void main(String ... args) {  //vargs ( variable number of arguements
+       SpringApplication.run(Application.class,args);
+     
+     }
+
+    public void run(String ... args){
+       //  hw.display(); 
+         greet();
+      }
+
+    private void greet(){
+       hw.display();
+    }
+
+  } 
+
+I am writing any ComponentScan so how the container will know that where these classes which are annotated with @Component,@Repository,@Service and @Controller are present ?
+A it always look for the package where the Application class is and to the sub-packages of the package where Application class is.
+-------------------------------------------------------------------------------------------------------------------------------
+1) You will create a Spring Boot project with Spring Initializer ( Which is web based) or we will will go for installing the 
+   plugin for STS alongwith Eclipse IDE so that we can create Spring Starter Project.
+2) pom.xml is getting created with some default dependencies.
+3) The confguration related class we dont have to create.
+4) We need to go for creating an object IOC container.
+--------------------------------------------------------------------------------------------------------------------------------------
+How to read properties from propertied file?
+A We need to have Environment object.
+
+      Environment env=context.getEnvironment();
+
+But in Spring Boot we are not having any ApplicationContext object. So how we will get this Environment object.
+A We will autowire the Environment object.
+
+
+
 
 
